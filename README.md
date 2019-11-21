@@ -89,17 +89,16 @@ signing the user certificate with the CA certificate and key generated above:
 
 > **NOTE**: The private key may be held on a secure-element on the end device,
   in which case you wouldn't want to generate a new key as in the example
-  below. The public key would need to be extracted from the private key
-  securely stored in the secure element, and provided to the server performing
-  the certificate generation and signing process. The private key should never
-  be exposed outside the device.
+  below. In this situation, the certificate signing request (USER.csr) will
+  need to be generated on the device that holds the private key, and then sent
+  to the signing engine that will generate the certificate based on the data
+  in the generated .csr file.  The private key should never be exposed outside
+  the device. This is also a good occasion to assign a HW-based unique ID to
+  the user certificate's `CN` field since this needs to be unique per device.
 
 ```bash
 # Generate a user key (if a key isn't available from a secure element, etc.)
 openssl ecparam -name secp256k1 -genkey -out USER.key
-
-# Extract the public key from the generated key file
-openssl ec -in USER.key -pubout -out USER.pub.key
 
 # Generate a certificate signing request, containing the user public key
 # and required details to be inserted into the user certificate.
@@ -157,6 +156,10 @@ openssl x509 -req -days 3650 -in INT.csr -CA CA.crt -CAkey CA.key \
 
 Finally, you can generate a **user** key, certificate request, and user
 certificate, signing it with the intermediate certificate and key:
+
+> **NOTE**: See note on two-level certificate chains above for instances where
+  the private key is held in a secure element on the HW device the certificate
+  is being generated for.
 
 ```bash
 # Generate a user key (if no secure element used for the key, etc.)
