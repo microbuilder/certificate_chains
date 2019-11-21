@@ -21,13 +21,16 @@ openssl ecparam -name $curve -genkey -out CA.key
 openssl req -new -x509 -days 3650 -key CA.key -out CA.crt \
         -subj "/O=Linaro/CN=Root CA"
 
-# Generate a user key
+# Generate a user key (if no secure element used for the key, etc.)
 openssl ecparam -name $curve -genkey -out USER.key
 # openssl genrsa -out USER.key 2048
 
-# Now generate a user certificate, signed with the CA cert and private key
+# Generate a certificate signing request
 openssl req -new -key USER.key -out USER.csr \
         -subj "/O=Linaro/CN=User Certificate"
+
+# Now generate a user certificate, signed with the CA cert and private key
+# This can be used to verify payloads signed with user's private key, etc.
 openssl x509 -req -days 3650 -in USER.csr -CA CA.crt -CAkey CA.key \
         -set_serial 101 \
         -out USER.crt

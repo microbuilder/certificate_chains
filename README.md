@@ -84,17 +84,30 @@ openssl req -new -x509 -days 3650 -key CA.key -out CA.crt \
         -subj "/O=Linaro/CN=Root CA"
 ```
 
-Now generate a user key and certificate, signing it with the CA
-data generated above:
+Now generate a user key, certificate signing request, and user certificate,
+signing the user certificate with the CA certificate and key generated above:
+
+> **NOTE**: The private key may be held on a secure-element on the end device,
+  in which case you wouldn't want to generate a new key as in the example
+  below. The public key would need to be extracted from the private key
+  securely stored in the secure element, and provided to the server performing
+  the certificate generation and signing process. The private key should never
+  be exposed outside the device.
 
 ```bash
-# Generate a user key
+# Generate a user key (if a key isn't available from a secure element, etc.)
 openssl ecparam -name secp256k1 -genkey -out USER.key
 
-# Generate a user certificate, signed with the CA cert and private key
+# Extract the public key from the generated key file
+openssl ec -in USER.key -pubout -out USER.pub.key
+
+# Generate a certificate signing request, containing the user public key
+# and required details to be inserted into the user certificate.
 openssl req -new -key USER.key -out USER.csr \
         -subj "/O=Linaro/CN=User Certificate"
 
+# Now generate a user certificate, signed with the CA cert and private key
+# This can be used to verify payloads signed with user's private key, etc.
 openssl x509 -req -days 3650 -in USER.csr -CA CA.crt -CAkey CA.key \
         -set_serial 101 \
         -out USER.crt
@@ -120,13 +133,14 @@ openssl req -new -x509 -days 3650 -key CA.key -out CA.crt \
         -subj "/O=Linaro/CN=Root CA"
 ```
 
-Then generate an **intermediate** CA key and certificate, singing it with
-the root CA certificate:
+Then generate an **intermediate** CA key, certificate request, and certificate,
+singing it with the root CA certificate and key:
 
 ```bash
 # Generate an intermediate cert
 openssl ecparam -name secp256k1 -genkey -out INT.key
 
+# Generate a certificate signing request
 openssl req -new -key INT.key -out INT.csr \
         -subj "/O=Linaro/CN=Intermediate CA"
 
@@ -141,21 +155,25 @@ openssl x509 -req -days 3650 -in INT.csr -CA CA.crt -CAkey CA.key \
         -out INT.crt
 ```
 
-Finally, you can generate a **user** key and certificate, signing it with the
-intermedia certificate:
+Finally, you can generate a **user** key, certificate request, and user
+certificate, signing it with the intermediate certificate and key:
 
 ```bash
-# Now lets generate a user certificate we can use to sign images.
+# Generate a user key (if no secure element used for the key, etc.)
 openssl ecparam -name secp256k1 -genkey -out USER.key
+
+# Generate a certificate signing request
 openssl req -new -key USER.key -out USER.csr \
         -subj "/O=Linaro/CN=User Certificate"
 
+# Now generate a user certificate, signed with the INT cert and private key
+# This can be used to verify payloads signed with user's private key, etc.
 openssl x509 -req -days 3650 -in USER.csr -CA INT.crt -CAkey INT.key \
         -set_serial 101 \
         -out USER.crt
 
 # Remove the certificate request files, as they aren't particularly useful.
-rm INT.csr USER.csr cansign.ext
+rm *.csr cansign.ext
 ```
 
 ## Analysing Certificates

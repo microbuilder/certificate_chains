@@ -29,12 +29,16 @@ openssl x509 -req -days 3650 -in INT.csr -CA CA.crt -CAkey CA.key \
         -extfile cansign.ext \
         -out INT.crt
 
-# Now lets generate a user certificate we can use to sign images.
-# openssl genrsa -out USER.key 2048
+# Generate a user key (if no secure element used for the key, etc.)
 openssl ecparam -name $curve -genkey -out USER.key
+# openssl genrsa -out USER.key 2048
+
+# Generate a certificate signing request
 openssl req -new -key USER.key -out USER.csr \
         -subj "/O=Linaro/CN=User Certificate"
 
+# Now generate a user certificate, signed with the CA cert and private key
+# This can be used to verify payloads signed with user's private key, etc.
 openssl x509 -req -days 3650 -in USER.csr -CA INT.crt -CAkey INT.key \
         -set_serial 101 \
         -out USER.crt
