@@ -33,9 +33,12 @@ User certificates contain, at a minimum, the following information:
 
 ## X.509 Standard
 
-Digital certificates are based on the X.509 standard:
+Digital certificates are based on the [X.509 standard][X5091] (RFC5280),
+available at: 
 
-- https://tools.ietf.org/rfc/rfc5280.txt
+- https://tools.ietf.org/html/rfc5280
+
+[X5091]:https://tools.ietf.org/rfc/rfc5280.txt
 
 ### `Subject` Distinguished Name
 
@@ -112,11 +115,11 @@ openssl x509 -req -days 3650 -in USER.csr -CA CA.crt -CAkey CA.key \
         -out USER.crt
 ```
 
-You can also do some cleanup to remove unnecessary files:
+You can also optionally do some cleanup to remove unnecessary files:
 
 ```bash
 # Remove the certificate request file (no longer useful)
-rm USER.csr
+rm *.csr
 ```
 
 ### Three-level certificate chain
@@ -174,14 +177,20 @@ openssl req -new -key USER.key -out USER.csr \
 openssl x509 -req -days 3650 -in USER.csr -CA INT.crt -CAkey INT.key \
         -set_serial 101 \
         -out USER.crt
+```
 
-# Remove the certificate request files, as they aren't particularly useful.
+You can also optionally do some cleanup to remove unnecessary files:
+
+```bash
+# Remove the certificate request and temp files (no longer useful)
 rm *.csr cansign.ext
 ```
 
-## Analysing Certificates
+## Analysing Certificate Artifacts
 
-The contents of a certificate can be displayed as follows:
+### X.509 Certificates
+
+The contents of an X.509 certificate can be displayed as follows:
 
 ```bash
 openssl x509 -in USER.crt -text
@@ -224,4 +233,41 @@ vyCd2mvTdv1zP11+PrGlQTImTfHDzSG+VA5M+yBJ47NTg9LdlomGTP+iiBDubtow
 CQYHKoZIzj0EAQNIADBFAiEAx7j14cnO4AcDeSlod1TltC8IK4HRLH7+/2eCLmhs
 7voCIH2bLII2dhQ81tieJOsl0svavL0T2qp/z81OUM5E9zXj
 -----END CERTIFICATE-----
+```
+
+### Certificate Signing Requests
+
+[PKCS#10][CSR1] (RFC2986) certificate signature requests (CSRs) can be viewed
+as follows:
+
+[CSR1]:https://tools.ietf.org/html/rfc2986
+
+```bash
+openssl asn1parse -i -in USER.csr
+```
+
+Which will yield something similar to:
+
+```
+0:d=0  hl=3 l= 228 cons: SEQUENCE
+3:d=1  hl=3 l= 139 cons:  SEQUENCE
+6:d=2  hl=2 l=   1 prim:   INTEGER           :00
+9:d=2  hl=2 l=  44 cons:   SEQUENCE
+11:d=3  hl=2 l=  15 cons:    SET
+13:d=4  hl=2 l=  13 cons:     SEQUENCE
+15:d=5  hl=2 l=   3 prim:      OBJECT            :organizationName
+20:d=5  hl=2 l=   6 prim:      UTF8STRING        :Linaro
+28:d=3  hl=2 l=  25 cons:    SET
+30:d=4  hl=2 l=  23 cons:     SEQUENCE
+32:d=5  hl=2 l=   3 prim:      OBJECT            :commonName
+37:d=5  hl=2 l=  16 prim:      UTF8STRING        :User Certificate
+55:d=2  hl=2 l=  86 cons:   SEQUENCE
+57:d=3  hl=2 l=  16 cons:    SEQUENCE
+59:d=4  hl=2 l=   7 prim:     OBJECT            :id-ecPublicKey
+68:d=4  hl=2 l=   5 prim:     OBJECT            :secp256k1
+75:d=3  hl=2 l=  66 prim:    BIT STRING
+143:d=2  hl=2 l=   0 cons:   cont [ 0 ]
+145:d=1  hl=2 l=  10 cons:  SEQUENCE
+147:d=2  hl=2 l=   8 prim:   OBJECT            :ecdsa-with-SHA256
+157:d=1  hl=2 l=  72 prim:  BIT STRING
 ```

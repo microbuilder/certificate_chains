@@ -26,6 +26,8 @@ openssl ecparam -name $curve -genkey -out USER.key
 # openssl genrsa -out USER.key 2048
 
 # Generate a certificate signing request
+# NOTE: You can view the contents of the X509 PKCS#10 CSR via:
+# openssl asn1parse -i -in USER.csr
 openssl req -new -key USER.key -out USER.csr \
         -subj "/O=Linaro/CN=User Certificate"
 
@@ -36,4 +38,4 @@ openssl x509 -req -days 3650 -in USER.csr -CA CA.crt -CAkey CA.key \
         -out USER.crt
 
 # Remove the certificate request files, as they aren't particularly useful.
-rm USER.csr
+# rm USER.csr
