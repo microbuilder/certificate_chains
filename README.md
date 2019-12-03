@@ -27,9 +27,9 @@ User certificates contain, at a minimum, the following information:
   the CA when signing another certificate.
 
 > **NOTE**: CAs also maintain certificates that contain their own public key.
-  Normally the CA certificate will be held on the server or device that wishes
+  Normally the root CA certificate will be held on the server or device that wishes
   to validate user certificates, ensuring that they have been properly signed
-  by the trusted CA.
+  by the trusted root CA.
 
 ## X.509 Standard
 
@@ -62,9 +62,13 @@ The following are some of the more common fields used in the subject:
 | PC            | Postal code                   |
 | MAIL          | E-mail address                |
 
-[1] Technically, there should never exist two certificates with the same `CN`
-and same serial number, and certs with the same `CN` and different serial
-numbers should be updates of the same logical certificate.
+[1] Technically, there should never exist two certificates with the
+same subject and same serial number, and certs with the same subject
+and different serial numbers should be updates of the same logical
+logical certificate.  Generally, device certificates will be reissued
+with new date ranges, and new serial numbers.  When signing
+certificates are reissued, the subject should be changed, typically by
+putting a version tag in one of the fields.
 
 ## Generating a Certificate Chain
 
@@ -193,7 +197,7 @@ rm *.csr cansign.ext
 The contents of an X.509 certificate can be displayed as follows:
 
 ```bash
-openssl x509 -in USER.crt -text
+openssl x509 -in USER.crt -noout -text
 ```
 
 Which should giving something resembling the following results:
@@ -224,15 +228,6 @@ Certificate:
          54:e5:b4:2f:08:2b:81:d1:2c:7e:fe:ff:67:82:2e:68:6c:ee:
          fa:02:20:7d:9b:2c:82:36:76:14:3c:d6:d8:9e:24:eb:25:d2:
          cb:da:bc:bd:13:da:aa:7f:cf:cd:4e:50:ce:44:f7:35:e3
------BEGIN CERTIFICATE-----
-MIIBQDCB6AIBZTAJBgcqhkjOPQQBMCoxDzANBgNVBAoMBkxpbmFybzEXMBUGA1UE
-AwwOTGluYXJvIFJvb3QgQ0EwHhcNMTkxMTIwMjE0MzEyWhcNMjkxMTE3MjE0MzEy
-WjA0MQ8wDQYDVQQKDAZMaW5hcm8xITAfBgNVBAMMGExpbmFybyBJbWFnZSBDZXJ0
-aWZpY2F0ZTBWMBAGByqGSM49AgEGBSuBBAAKA0IABFaqbh9jYhlsD8vUT25npuVu
-vyCd2mvTdv1zP11+PrGlQTImTfHDzSG+VA5M+yBJ47NTg9LdlomGTP+iiBDubtow
-CQYHKoZIzj0EAQNIADBFAiEAx7j14cnO4AcDeSlod1TltC8IK4HRLH7+/2eCLmhs
-7voCIH2bLII2dhQ81tieJOsl0svavL0T2qp/z81OUM5E9zXj
------END CERTIFICATE-----
 ```
 
 ### Certificate Signing Requests
@@ -271,3 +266,12 @@ Which will yield something similar to:
 147:d=2  hl=2 l=   8 prim:   OBJECT            :ecdsa-with-SHA256
 157:d=1  hl=2 l=  72 prim:  BIT STRING
 ```
+
+# Certification path validity
+
+Code that uses X.509 certificates, and specifically code that
+validates whether a certificate change is valid, should use the
+[Certification path validation algorithm][wiki-cpva] (which is defined
+in RFC 5280 chapter 6.
+
+[wiki-cpva]:https://en.wikipedia.org/wiki/Certification_path_validation_algorithm
