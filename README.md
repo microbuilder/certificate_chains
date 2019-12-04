@@ -27,9 +27,9 @@ User certificates contain, at a minimum, the following information:
   the CA when signing another certificate.
 
 > **NOTE**: CAs also maintain certificates that contain their own public key.
-  Normally the root CA certificate will be held on the server or device that wishes
-  to validate user certificates, ensuring that they have been properly signed
-  by the trusted root CA.
+  Normally the root CA certificate will be held on the server or device that
+  wishes to validate user certificates, ensuring that they have been properly
+  signed by the trusted root CA.
 
 ## X.509 Standard
 
@@ -275,3 +275,14 @@ validates whether a certificate change is valid, should use the
 in RFC 5280 chapter 6.
 
 [wiki-cpva]:https://en.wikipedia.org/wiki/Certification_path_validation_algorithm
+
+# Certficate-Base Provisioning Workflows
+
+## Two-Level Provisioning
+
+The following sequence diagram shows how a 2-level certificate chain might be
+used when provisions devices into a managed end node system.
+
+![alt text][workflow-2lvl]
+
+[workflow-2lvl]: img/workflow_2level.png
