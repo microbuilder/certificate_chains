@@ -31,11 +31,18 @@ openssl ecparam -name $curve -genkey -out USER.key
 openssl req -new -key USER.key -out USER.csr \
         -subj "/O=Linaro/CN=User Certificate"
 
+# Create a config snippet that includes the required extensions.
+echo "subjectKeyIdentifier=hash" > exts$$.ext
+echo "authorityKeyIdentifier=keyid,issuer" >> exts$$.ext
+
 # Now generate a user certificate, signed with the CA cert and private key
 # This can be used to verify payloads signed with user's private key, etc.
 openssl x509 -req -days 3650 -in USER.csr -CA CA.crt -CAkey CA.key \
         -set_serial 101 \
+	-extfile exts$$.ext \
         -out USER.crt
+
+rm exts$$.ext
 
 # Remove the certificate request files, as they aren't particularly useful.
 # rm USER.csr
