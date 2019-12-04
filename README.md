@@ -272,16 +272,27 @@ Which will yield something similar to:
 Code that uses X.509 certificates, and specifically code that
 validates whether a certificate change is valid, should use the
 [Certification path validation algorithm][wiki-cpva] (which is defined
-in RFC 5280 chapter 6.
+in RFC 5280 chapter 6).
 
 [wiki-cpva]:https://en.wikipedia.org/wiki/Certification_path_validation_algorithm
 
-# Certficate-Base Provisioning Workflows
+# Provisioning Workflows
 
-## Two-Level Provisioning
+The following sequence diagrams shows how certificate chains might be used
+when provisioning devices into a device management system.
 
-The following sequence diagram shows how a 2-level certificate chain might be
-used when provisions devices into a managed end node system.
+## Two-Level Certificate Chains
+
+The following workflow assumes a provisioning device connecting to a new end
+node device to be provisioned. The provisioning device uses the mcumgr
+protocol that is understood by both mcuboot and Zephyr RTOS, and can
+communicate over USART, IP and BLE at present, and can easily be extended to
+SWD or other transports as required.
+
+On BLE-enabled devices, for example, an app on a tablet or mobile phone could
+connect to the end node over mcumgr, and communicate with the Root CA Server
+when signing the certificate signing request and providing the certificate
+chain.
 
 ![alt text][workflow-2lvl]
 
