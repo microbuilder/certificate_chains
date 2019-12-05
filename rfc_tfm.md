@@ -143,6 +143,9 @@ certificates that make up the certificate chain:
 
 ## References
 
-[X.509 Certificates](https://github.com/microbuilder/certificate_chains/blob/master/rfc_tfm.md)
-A high-level overview of X.509 certificate in the context of TF-M and how
-the signing process may work.
+- [X.509 Certificate Generation](https://github.com/microbuilder/certificate_chains/blob/master/rfc_tfm.md)
+A high-level overview of X.509 certificate chain generation in the context of
+TF-M and how the signing process may work.
+- [CBOR Profile of X.509 Certificates](https://datatracker.ietf.org/doc/draft-raza-ace-cbor-certificates/)
+This IETF draft proposes a more compact representation of X.509 certificates
+and may be relevant to the issues discussed here.
