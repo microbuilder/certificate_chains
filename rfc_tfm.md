@@ -20,7 +20,7 @@ Some of the key goals of this proposal are:
 - Increase the level of trust in the provenance of the public key provided by
   a device during attestation or provisioning.
 - Enable the manipulation and use of X.509 certificate chains in TF-M.
-- Allow multiple CAs to be involved in the certification signing process,
+- Allow multiple CAs to be involved in the certificate signing process,
   such as a Root CA from the device vendor, an intermediate CA from the
   manufacturer of OEM, etc.
 - Allow firmware images to be signed by different OEMs, for example, based on
@@ -29,9 +29,8 @@ Some of the key goals of this proposal are:
 - Enable the generation and secure storage of new private keys for use with
   cloud or device management services.
 - Generation of certificate signing requests (.csr), making secure use of the
-  private keys to request the generation of a certificate chain for that key
-  pair, safely handled in the secure processing environment and with secure
-  storage for the private key elements.
+  private keys to request the certificate chain for that key, based on a HW
+  element (IAT, etc.) or a generated key pair (see previous point).
 
 ## Description
 
@@ -41,7 +40,7 @@ At present, TF-M makes use of two main key pairs:
   to sign the SHA256 hashes of initial attestation tokens (IATs) to verify their
   authenticity. Devices receiving the attestation token require the public
   key from this key pair to 'validate' the attestation token.
-- An **RSA2048/2072 byte key pair** used to **sign firmware images**, which are
+- An **RSA2048/3072 byte key pair** used to **sign firmware images**, which are
   verified at boot by mcuboot. The public part of this key is held by
   mcuboot firmware, and used to verify the firmware image at boot.
 
