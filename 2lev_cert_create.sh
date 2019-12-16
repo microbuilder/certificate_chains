@@ -11,7 +11,7 @@
 # https://www.poftut.com/use-openssl-s_client-check-verify-ssltls-https-webserver/
 
 # ecdsa-with-SHA256
-curve=secp256k1
+curve=secp256r1
 
 # Generate key for A, the root
 openssl ecparam -name $curve -genkey -out CA.key

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-curve=secp256k1
+curve=secp256r1
 
 # Generate key for CA, the root
 openssl ecparam -name $curve -genkey -out CA.key
