@@ -4,14 +4,14 @@ Certificates are issued by a **Certificate Authority** (CA), and are used to
 certify that a public key belongs to a specific entity. They contain a
 public key, and details on the CA that validated the key in question.
 
-Certificate authorities acts as a trusted third party. If the
+Certificate authorities act as a trusted third party. If the
 **user certificate** is signed by the CA, you have a reasonable degree of
 confidence that the public key in the user certificate (provided by the device)
 hasn't been replaced in a man-in-the-middle attack with another public key that
 isn't known to the CA.
 
 Multiple certificates can be connected together in something called a
-**certificate chain**, where each subsequent certificate level is signed (or 
+**certificate chain**, where each subsequent certificate level is signed (or
 'certified') by the level above it, with the primary CA at the root of the
 certificate chain.
 
@@ -19,7 +19,7 @@ certificate chain.
 
 User certificates contain, at a minimum, the following information:
 
-- The owner's public key 
+- The owner's public key
 - The owner's distinguished name
 - The distinguished name of the CA that issued the certificate
 - The initial and expiry date for the certificate's validity
@@ -34,7 +34,7 @@ User certificates contain, at a minimum, the following information:
 ## X.509 Standard
 
 Digital certificates are based on the [X.509 standard][X5091] (RFC5280),
-available at: 
+available at:
 
 - https://tools.ietf.org/html/rfc5280
 
@@ -81,7 +81,7 @@ in the real world.
 ### Two-level certificate chain
 
 You can generate a CA key and certificate as follows:
-  
+
 ```bash
 # Generate a root CA key
 openssl ecparam -name secp256k1 -genkey -out CA.key
@@ -129,7 +129,7 @@ rm *.csr
 ### Three-level certificate chain
 
 You can generate a **root** CA key and certificate as follows:
-  
+
 ```bash
 # Generate a root CA key
 openssl ecparam -name secp256k1 -genkey -out CA.key
@@ -216,7 +216,7 @@ Certificate:
         Subject Public Key Info:
             Public Key Algorithm: id-ecPublicKey
                 Public-Key: (256 bit)
-                pub: 
+                pub:
                     04:56:aa:6e:1f:63:62:19:6c:0f:cb:d4:4f:6e:67:
                     a6:e5:6e:bf:20:9d:da:6b:d3:76:fd:73:3f:5d:7e:
                     3e:b1:a5:41:32:26:4d:f1:c3:cd:21:be:54:0e:4c:

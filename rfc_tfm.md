@@ -19,7 +19,7 @@ Some of the key goals of this proposal are:
 
 - Increase the level of trust in the provenance of the public key provided by
   a device during attestation or provisioning.
-- Enable the manipulation and use of X.509 certificate chains in TF-M.
+- Enable the manipulation, signing and use of X.509 certificate chains in TF-M.
 - Allow multiple CAs to be involved in the certificate signing process,
   such as a Root CA from the device vendor, an intermediate CA from the
   manufacturer of OEM, etc.
@@ -27,7 +27,8 @@ Some of the key goals of this proposal are:
   a common parent image from a trusted source, knowing where the specific
   variant comes from at the root and intermediate (OEM) level.
 - Enable the generation and secure storage of new private keys for use with
-  cloud or device management services.
+  cloud or device management services, including storage of signed certificate
+  chains in secure storage.
 - Generation of certificate signing requests (.csr), making secure use of the
   private keys to request the certificate chain for that key, based on a HW
   element (IAT, etc.) or a generated key pair (see previous point).
@@ -96,6 +97,21 @@ chain.
 
 Part of the work to be done on the TF-M secure side is in the **Generate
 certificate signing request (PKCS#10) on secure side** box.
+
+### TF-M Requirements
+
+- Secure functions to generate and store:
+  - New private keys
+  - Certificate signing requests based on a specific private key and meta-data
+  - Storage and retrieval of signed certificate chains on request
+- Private keys should never be accessible from the non-secure side.
+- Certificate signing requests (CSRs) can be requested based on the ID of a
+  specific, previously generated private key held securely in ITS.
+- Binary blob certificate chains can be updated and retrieved from NS world.
+- Support should be added to verify the certificate authority (CA) signatures
+  in the certificate chains, based on the public CA key held on the device.
+  This public CA key can also be held in ITS, but this isn't a security
+  requirement.
 
 ## Key Concepts/Terms
 
