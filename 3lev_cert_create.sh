@@ -50,6 +50,9 @@ openssl x509 -req -days 3650 -in USER.csr -CA INT.crt -CAkey INT.key \
 	-extfile exts$$.ext \
         -out USER.crt
 
+# Also generate a PKCS#7 output file
+openssl crl2pkcs7 -nocrl -certfile USER.crt -out USER.p7b
+
 # Remove the certificate request files, as they aren't particularly
 # useful.
 rm INT.csr USER.csr cansign$$.ext exts$$.ext
