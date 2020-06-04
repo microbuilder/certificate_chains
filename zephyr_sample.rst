@@ -135,9 +135,12 @@ A script starting a server which performs the following operations:
 - Accepts data packets that are hashed and signed with a prime256v1
   (ecdsa-with-SHA256) key, and accepting or rejecting them based on the
   validity of the signature, using previously registered public key data
-  from the certificate chain.
+  from the certificate chain. COSE `SIGN1`_ is proposed as a means of encoding
+  this data in a standard format.
 - An MQTT broker is proposed as the middle component between the end device
   and the data aggregation server, where the end device writes the hashed and
   signed payloads to the MQTT broker, and the server scans the broker for
   incoming packets asynchronously. An error channel can be used to indicate
   to the end device when a packet is rejected.
+
+.. _SIGN1: https://tools.ietf.org/html/rfc8152#section-4.2
